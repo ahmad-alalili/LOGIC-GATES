@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محاكاة البوابات المنطقية - أداة شرح تفاعلية</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            direction: rtl;
+            color: white;
+            transition: padding 0.3s;
+        }
+        body.mobile-view {
+            padding: 5px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 2px solid #4a90e2;
+            transition: all 0.3s;
+        }
+        body.mobile-view .container {
+            max-width: 100%;
+            border-radius: 10px;
+            border-width: 1px;
+        }
+        header {
+            background: linear-gradient(90deg, #1a2a6c, #4a4a8a);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 3px solid #4a90e2;
+            position: relative;
+        }
+        body.mobile-view header {
+            padding: 15px 10px;
+        }
+        .view-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(74, 144, 226, 0.3);
+            border: 2px solid #4a90e2;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+        .view-toggle:hover {
+            background: rgba(74, 144, 226, 0.5);
+            transform: scale(1.05);
+        }
+        body.mobile-view .view-toggle {
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            font-size: 0.8em;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.8em;
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.7);
+        }
+        body.mobile-view h1 {
+            font-size: 1.5em;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        body.mobile-view .subtitle {
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        body.mobile-view header > div:last-child {
+            display: none;
+        }
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+        body.mobile-view .content {
+            padding: 10px;
+            gap: 10px;
+        }
+        .simulation-area {
+            flex: 3;
+            min-width: 700px;
+            background: rgba(30, 30, 50, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #5d8aa8;
+        }
+        body.mobile-view .simulation-area {
+            min-width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(30, 30, 50, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #5d8aa8;
+        }
+        body.mobile-view .controls {
+            min-width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .mode-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        body.mobile-view .mode-selector {
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        .mode-btn {
+            background: rgba(60, 60, 90, 0.6);
+            color: white;
+            padding: 15px 30px;
+            border: 2px solid #5d8aa8;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        body.mobile-view .mode-btn {
+            padding: 10px 15px;
+            font-size: 1em;
+        }
+        .mode-btn:hover {
+            background: rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+        .mode-btn.active {
+            background: #4a90e2;
+            border-color: #4a90e2;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.5);
+        }
+        .learning-mode, .quiz-mode {
+            display: none;
+        }
+        .learning-mode.active, .quiz-mode.active {
+            display: block;
+        }
+        .quiz-question {
+            background: rgba(40, 40, 70, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #5d8aa8;
+        }
+        body.mobile-view .quiz-question {
+            padding: 10px;
+            margin: 8px 0;
+        }
+        .quiz-options {
+            margin: 10px 0;
+        }
+        .quiz-option {
+            background: rgba(60, 60, 90, 0.6);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        .quiz-option:hover {
+            background: rgba(74, 144, 226, 0.3);
+            border-color: #4a90e2;
+        }
+        .quiz-option.selected {
+            background: rgba(74, 144, 226, 0.5);
+            border-color: #4a90e2;
+        }
+        .quiz-option.correct {
+            background: rgba(76, 175, 80, 0.5);
+            border-color: #4CAF50;
+        }
+        .quiz-option.incorrect {
+            background: rgba(244, 67, 54, 0.5);
+            border-color: #f44336;
+        }
+        .quiz-btn {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        body.mobile-view .quiz-btn {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+        .quiz-btn:hover {
+            background: #357abd;
+            transform: scale(1.05);
+        }
+        .quiz-result {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 2px solid #ffd700;
+            font-size: 1.1em;
+            font-weight: bold;
+            text-align: center;
+        }
+        .gate-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .gate-select-btn {
+            background: rgba(60, 60, 90, 0.6);
+            padding: 8px 12px;
+            border: 2px solid #5d8aa8;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .gate-select-btn:hover {
+            background: rgba(74, 144, 226, 0.3);
+        }
+        .gate-select-btn.active {
+            background: #4a90e2;
+            border-color: #4a90e2;
+            font-weight: bold;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 80px;
+            height: 40px;
+            vertical-align: middle;
+        }
+        body.mobile-view .switch {
+            width: 60px;
+            height: 30px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 32px;
+            width: 32px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        body.mobile-view .slider:before {
+            height: 22px;
+            width: 22px;
+        }
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+        input:checked + .slider:before {
+            transform: translateX(40px);
+        }
+        body.mobile-view input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        .gate-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        body.mobile-view .gate-container {
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .gate {
+            background: rgba(40, 40, 70, 0.8);
+            border: 2px solid #5d8aa8;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            min-width: 280px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        body.mobile-view .gate {
+            min-width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .gate:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
+        }
+        body.mobile-view .gate:hover {
+            transform: none;
+        }
+        .gate h3 {
+            margin: 0 0 15px 0;
+            color: #4a90e2;
+            font-size: 1.4em;
+        }
+        body.mobile-view .gate h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .gate-diagram {
+            width: 230px;
+            height: 190px;
+            margin: 0 auto 15px;
+            position: relative;
+            background: #222;
+            border: 2px solid #5d8aa8;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        body.mobile-view .gate-diagram {
+            width: 100%;
+            max-width: 230px;
+            height: 160px;
+        }
+        .gate-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .input-value {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #333;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .input-a-val {
+            top: 26%;
+            left: 5px;
+        }
+        .input-b-val {
+            top: 56%;
+            left: 5px;
+        }
+        .input-single-val {
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+        }
+        .output-value {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #333;
+            color: white;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 50%;
+            right: 5px;
+            transform: translateY(-50%);
+        }
+        .led {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #f44336;
+            box-shadow: 0 0 10px #f44336;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+        }
+        .led.on {
+            background: #4CAF50;
+            box-shadow: 0 0 15px #4CAF50;
+        }
+        .gate-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .input-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            background: #333;
+            border: 2px solid #666;
+        }
+        .input-indicator.active {
+            background: #4CAF50;
+            border-color: #4CAF50;
+            box-shadow: 0 0 15px #4CAF50;
+        }
+        .input-indicator.inactive {
+            background: #f44336;
+            border-color: #f44336;
+            box-shadow: 0 0 15px #f44336;
+        }
+        .gate-output {
+            margin-top: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        body.mobile-view .gate-output {
+            font-size: 1.2em;
+        }
+        .output-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.8em;
+            margin: 10px auto;
+        }
+        body.mobile-view .output-indicator {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5em;
+        }
+        .output-indicator.on {
+            background: #4CAF50;
+            box-shadow: 0 0 20px #4CAF50;
+        }
+        .output-indicator.off {
+            background: #f44336;
+            box-shadow: 0 0 20px #f44336;
+        }
+        .truth-table {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            direction: ltr;
+        }
+        th, td {
+            border: 1px solid #5d8aa8;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+        body.mobile-view th, body.mobile-view td {
+            padding: 5px;
+            font-size: 0.85em;
+        }
+        th {
+            background: #1a2a6c;
+            color: white;
+        }
+        .current-row {
+            background: linear-gradient(90deg, #ff8c00, #ffd700) !important;
+            font-weight: bold;
+            box-shadow: 0 0 15px #ff8c00;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+        .gate-info {
+            background: rgba(60, 60, 100, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        body.mobile-view .gate-info {
+            padding: 10px;
+            font-size: 0.85em;
+        }
+        .instructions {
+            background: rgba(60, 60, 100, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        body.mobile-view .instructions {
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .instructions h3 {
+            color: #4a90e2;
+            margin-top: 0;
+        }
+        .instructions ul {
+            padding-right: 20px;
+        }
+        body.mobile-view .instructions ul {
+            padding-right: 15px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        body.mobile-view .instructions li {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .gate-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .gate-switch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .gate-switch label {
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .timing-diagram-area {
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 2px solid #4a90e2;
+        }
+        body.mobile-view .timing-diagram-area {
+            padding: 10px;
+            margin-top: 15px;
+        }
+        .timing-diagram-area h3 {
+            color: #ffd700;
+            margin-top: 0;
+            text-align: center;
+        }
+        body.mobile-view .timing-diagram-area h3 {
+            font-size: 1em;
+        }
+        #timingCanvas {
+            border: 1px solid #5d8aa8;
+            background: #1a1a2e;
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+        }
+        .diagram-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        body.mobile-view .diagram-controls {
+            gap: 8px;
+            font-size: 0.85em;
+        }
+        .diagram-controls select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #5d8aa8;
+            background: #333;
+            color: white;
+        }
+        body.mobile-view .diagram-controls select {
+            padding: 6px;
+            font-size: 0.85em;
+        }
+        @media (max-width: 1100px) {
+            .content {
+                flex-direction: column;
+            }
+            .simulation-area, .controls {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="view-toggle" onclick="toggleView()" id="viewToggleBtn">
+                <span id="viewIcon">📱</span>
+                <span id="viewText">نسخة الهاتف</span>
+            </button>
+            <h1>محاكاة البوابات المنطقية</h1>
+            <div class="subtitle">أداة شرح تفاعلية للمخططات الزمنية والدوائر الرقمية</div>
+            <div style="margin-top: 15px; font-size: 1.1em; opacity: 0.95;">
+                <div style="font-weight: bold;">م. أحمد سعيد العليلي</div>
+                <div style="font-size: 0.95em; margin-top: 5px;">مدرب - الكلية التقنية بالدائر</div>
+                <div style="font-size: 0.9em; margin-top: 3px;">قسم الإلكترونيات الصناعية والتحكم</div>
+            </div>
+        </header>
+        <div class="content">
+            <div class="simulation-area">
+                <div class="mode-selector">
+                    <button class="mode-btn active" onclick="switchMode('learning')">📚 وضع التعلم</button>
+                    <button class="mode-btn" onclick="switchMode('quiz')">📝 وضع الاختبار</button>
+                </div>
+
+                <div class="learning-mode active">
+                    <div class="timing-diagram-area">
+                        <h3>📈 الرسم الزمني التفاعلي (10 خطوات زمنية)</h3>
+                        <div class="diagram-controls">
+                            <label for="gateSelect">اختر البوابة:</label>
+                            <select id="gateSelect" onchange="resetTimingDiagram()">
+                                <option value="and">AND</option>
+                                <option value="or">OR</option>
+                                <option value="not">NOT</option>
+                                <option value="nand">NAND</option>
+                                <option value="nor">NOR</option>
+                                <option value="xor">XOR</option>
+                                <option value="xnor">XNOR</option>
+                            </select>
+                            
+                            <label>المدخل A:</label>
+                            <label class="switch"><input type="checkbox" id="diagramInputA"><span class="slider"></span></label>
+                            <label id="BLabel">المدخل B:</label>
+                            <label class="switch"><input type="checkbox" id="diagramInputB"><span class="slider"></span></label>
+                            <button class="quiz-btn" onclick="applyInputsToDiagram()">▶️ تسجيل الخطوة</button>
+                            <button class="quiz-btn" onclick="resetTimingDiagram()">🔄 إعادة تعيين</button>
+                        </div>
+                        <canvas id="timingCanvas" width="900" height="250"></canvas>
+                        <div style="text-align:center; font-size:0.9em; opacity:0.8;">
+                            الوضع: يدوي (خطوة بخطوة). يمكنك تغيير المدخلات A و B ثم الضغط على "تسجيل الخطوة" لتسجيل النبضة ورسم المخرج.
+                        </div>
+                    </div>
+                    <div class="instructions">
+                        <h3>كيفية استخدام المحاكاة:</h3>
+                        <ul>
+                            <li>استخدم المفاتيح العامة أو المفاتيح الخاصة بكل بوابة</li>
+                            <li>راقب تغير المخرجات فوراً مع تغيير المدخلات</li>
+                            <li>الصف النشط في جدول الحقيقة يضيء بلون مميز</li>
+                            <li>الرموز تطابق المعايير القياسية للبوابات المنطقية</li>
+                        </ul>
+                    </div>
+                    <div class="gate-container" id="gateContainer"></div>
+                </div>
+
+                <div class="quiz-mode">
+                    <div style="background: rgba(60, 60, 100, 0.6); padding: 20px; border-radius: 10px;">
+                        <h2 style="color: #4a90e2; margin-top: 0; text-align: center;">🎯 اختبار البوابات المنطقية</h2>
+                        <div style="margin: 20px 0;">
+                            <h3 style="font-size: 1.1em; margin-bottom: 10px; text-align: center;">اختر البوابات للاختبار:</h3>
+                            <div class="gate-selector">
+                                <button class="gate-select-btn active" onclick="toggleGateSelection('all')">الكل</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('and')">AND</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('or')">OR</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('not')">NOT</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('nand')">NAND</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('nor')">NOR</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('xor')">XOR</button>
+                                <button class="gate-select-btn" onclick="toggleGateSelection('xnor')">XNOR</button>
+                            </div>
+                        </div>
+                        <button class="quiz-btn" onclick="startQuiz()" style="width: 100%; font-size: 1.1em; padding: 15px;">🚀 ابدأ الاختبار</button>
+                        <div id="quizContainer" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <div class="gate-info">
+                    <h3>معلومات عن البوابات:</h3>
+                    <p><strong>AND:</strong> الناتج 1 فقط إذا كان كلا المدخلين 1</p>
+                    <p><strong>OR:</strong> الناتج 1 إذا كان أحد المدخلين 1 على الأقل</p>
+                    <p><strong>NOT:</strong> مقلوب المدخل</p>
+                    <p><strong>NAND:</strong> عكس بوابة AND</p>
+                    <p><strong>NOR:</strong> عكس بوابة OR</p>
+                    <p><strong>XOR:</strong> الناتج 1 إذا كان المدخلان مختلفين</p>
+                    <p><strong>XNOR:</strong> الناتج 1 إذا كان المدخلان متماثلين</p>
+                </div>
+                <div style="background: rgba(60, 60, 100, 0.6); padding: 15px; border-radius: 10px; margin-top: 20px;">
+                    <h3>الحالة الحالية:</h3>
+                    <div style="font-size: 1.2em; margin-top: 10px;">
+                        <div>المدخل A: <span id="statusA">0</span></div>
+                        <div>المدخل B: <span id="statusB">0</span></div>
+                        <div style="margin-top: 10px; font-weight: bold;">النتائج:</div>
+                        <div>AND: <span id="statusAND">0</span> | OR: <span id="statusOR">0</span> | NOT: <span id="statusNOT">1</span></div>
+                        <div>NAND: <span id="statusNAND">1</span> | NOR: <span id="statusNOR">1</span></div>
+                        <div>XOR: <span id="statusXOR">0</span> | XNOR: <span id="statusXNOR">1</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer style="background: rgba(20, 20, 40, 0.8); padding: 20px; text-align: center; border-top: 2px solid #4a90e2; margin-top: 20px;">
+            <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 8px;">
+                © 2025 جميع الحقوق محفوظة
+            </div>
+            <div style="font-size: 1.2em; color: #4a90e2; font-weight: bold; margin-bottom: 5px;">
+                م. أحمد سعيد العليلي
+            </div>
+            <div style="font-size: 0.95em; opacity: 0.9;">
+                الكلية التقنية بالدائر - قسم الإلكترونيات الصناعية والتحكم
+            </div>
+        </footer>
+    </div>
+    <script>
+        const gates = [
+            {name: 'and', title: 'البوابة AND', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="135" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="60" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="60" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 L 60 90 L 90 90 A 30 30 0 0 0 90 30 Z" fill="none" stroke="white" stroke-width="2"/><line x1="120" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">A × B = Y</text>', inputs: 2, table: [[0,0,0],[0,1,0],[1,0,0],[1,1,1]]},
+            {name: 'or', title: 'البوابة OR', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="130" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="62" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="62" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 Q 70 60 60 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 95 30 115 60" fill="none" stroke="white" stroke-width="2"/><path d="M 60 90 Q 95 90 115 60" fill="none" stroke="white" stroke-width="2"/><line x1="115" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">A + B = Y</text>', inputs: 2, table: [[0,0,0],[0,1,1],[1,0,1],[1,1,1]]},
+            {name: 'not', title: 'البوابة NOT', svg: '<text x="35" y="55" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="140" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="60" x2="60" y2="60" stroke="white" stroke-width="2"/><path d="M 60 30 L 60 90 L 110 60 Z" fill="none" stroke="white" stroke-width="2"/><circle cx="118" cy="60" r="8" fill="none" stroke="white" stroke-width="2"/><line x1="126" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="110" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle"><tspan text-decoration="overline">A</tspan> = Y</text>', inputs: 1, table: [[0,1],[1,0]]},
+            {name: 'nand', title: 'البوابة NAND', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="145" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="60" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="60" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 L 60 90 L 90 90 A 30 30 0 0 0 90 30 Z" fill="none" stroke="white" stroke-width="2"/><circle cx="128" cy="60" r="8" fill="none" stroke="white" stroke-width="2"/><line x1="136" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle"><tspan text-decoration="overline">A × B</tspan> = Y</text>', inputs: 2, table: [[0,0,1],[0,1,1],[1,0,1],[1,1,0]]},
+            {name: 'nor', title: 'البوابة NOR', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="140" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="62" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="62" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 Q 70 60 60 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 95 30 115 60" fill="none" stroke="white" stroke-width="2"/><path d="M 60 90 Q 95 90 115 60" fill="none" stroke="white" stroke-width="2"/><circle cx="123" cy="60" r="8" fill="none" stroke="white" stroke-width="2"/><line x1="131" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle"><tspan text-decoration="overline">A + B</tspan> = Y</text>', inputs: 2, table: [[0,0,1],[0,1,0],[1,0,0],[1,1,0]]},
+            {name: 'xor', title: 'البوابة XOR', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="130" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="62" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="62" y2="78" stroke="white" stroke-width="2"/><path d="M 52 30 Q 62 60 52 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 70 60 60 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 95 30 115 60" fill="none" stroke="white" stroke-width="2"/><path d="M 60 90 Q 95 90 115 60" fill="none" stroke="white" stroke-width="2"/><line x1="115" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle"><tspan text-decoration="overline">A</tspan>B + A<tspan text-decoration="overline">B</tspan> = Y</text>', inputs: 2, table: [[0,0,0],[0,1,1],[1,0,1],[1,1,0]]},
+            {name: 'xnor', title: 'البوابة XNOR', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="140" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="62" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="62" y2="78" stroke="white" stroke-width="2"/><path d="M 52 30 Q 62 60 52 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 70 60 60 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 95 30 115 60" fill="none" stroke="white" stroke-width="2"/><path d="M 60 90 Q 95 90 115 60" fill="none" stroke="white" stroke-width="2"/><circle cx="123" cy="60" r="8" fill="none" stroke="white" stroke-width="2"/><line x1="131" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">AB + <tspan text-decoration="overline">A</tspan><tspan text-decoration="overline">B</tspan> = Y</text>', inputs: 2, table: [[0,0,1],[0,1,0],[1,0,0],[1,1,1]]}
+        ];
+
+        function createGateHTML(g) {
+            const valClass = g.inputs === 1 ? 'input-single-val' : '';
+            return `<div class="gate"><h3>${g.title}</h3><div class="gate-diagram"><svg class="gate-svg" viewBox="0 0 180 120">${g.svg}</svg><div class="input-value ${valClass || 'input-a-val'}" id="${g.name}InputAValue">0</div>${g.inputs === 2 ? `<div class="input-value input-b-val" id="${g.name}InputBValue">0</div>` : ''}<div class="output-value" id="${g.name}OutputValue">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="led${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? ' on' : ''}" id="${g.name}Led"></div></div><div class="gate-controls"><div class="gate-switch"><label>المدخل A</label><label class="switch"><input type="checkbox" id="${g.name}A" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>${g.inputs === 2 ? `<div class="gate-switch"><label>المدخل B</label><label class="switch"><input type="checkbox" id="${g.name}B" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>` : ''}</div><div class="gate-inputs"><div class="input-indicator" id="${g.name}AIndicator">0</div>${g.inputs === 2 ? `<div class="input-indicator" id="${g.name}BIndicator">0</div>` : ''}</div><div class="gate-output">الخرج Y:</div><div class="output-indicator ${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? 'on' : 'off'}" id="${g.name}Output">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="truth-table"><table id="${g.name}Table"><thead><tr>${g.inputs === 2 ? '<th>A</th><th>B</th>' : '<th>A</th>'}<th>Y</th></tr></thead><tbody>${g.table.map((r, i) => `<tr id="${g.name}Row${g.inputs === 2 ? r[0] + '' + r[1] : r[0]}">${g.inputs === 2 ? `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td>` : `<td>${r[0]}</td><td>${r[1]}</td>`}</tr>`).join('')}</tbody></table></div></div>`;
+        }
+
+        document.getElementById('gateContainer').innerHTML = gates.map(createGateHTML).join('');
+
+        function updateGateWithControls(n) {
+            const g = gates.find(x => x.name === n);
+            const a = document.getElementById(`${n}A`).checked ? 1 : 0;
+            const b = g.inputs === 2 ? (document.getElementById(`${n}B`).checked ? 1 : 0) : 0;
+            updateInputIndicator(`${n}AIndicator`, a);
+            if (g.inputs === 2) updateInputIndicator(`${n}BIndicator`, b);
+            let out = 0;
+            if (n === 'and') out = a && b;
+            else if (n === 'or') out = a || b;
+            else if (n === 'not') out = !a ? 1 : 0;
+            else if (n === 'nand') out = !(a && b) ? 1 : 0;
+            else if (n === 'nor') out = !(a || b) ? 1 : 0;
+            else if (n === 'xor') out = a ^ b;
+            else if (n === 'xnor') out = !(a ^ b) ? 1 : 0;
+            const outEl = document.getElementById(`${n}Output`);
+            outEl.textContent = out;
+            outEl.className = `output-indicator ${out === 1 ? 'on' : 'off'}`;
+            document.getElementById(`${n}InputAValue`).textContent = a;
+            if (g.inputs === 2) document.getElementById(`${n}InputBValue`).textContent = b;
+            document.getElementById(`${n}OutputValue`).textContent = out;
+            const led = document.getElementById(`${n}Led`);
+            led.className = out === 1 ? 'led on' : 'led';
+            const rows = document.querySelectorAll(`#${n}Table tbody tr`);
+            rows.forEach(r => r.classList.remove('current-row'));
+            const rowId = g.inputs === 2 ? `${n}Row${a}${b}` : `${n}Row${a}`;
+            const row = document.getElementById(rowId);
+            if (row) row.classList.add('current-row');
+            updateStatusPanel();
+        }
+
+        function updateStatusPanel() {
+            const andA = document.getElementById('andA') ? (document.getElementById('andA').checked ? 1 : 0) : 0;
+            const andB = document.getElementById('andB') ? (document.getElementById('andB').checked ? 1 : 0) : 0;
+            if (document.getElementById('statusA')) document.getElementById('statusA').textContent = andA;
+            if (document.getElementById('statusB')) document.getElementById('statusB').textContent = andB;
+            if (document.getElementById('statusAND')) document.getElementById('statusAND').textContent = andA && andB;
+            if (document.getElementById('statusOR')) document.getElementById('statusOR').textContent = andA || andB;
+            if (document.getElementById('statusNOT')) document.getElementById('statusNOT').textContent = !andA ? 1 : 0;
+            if (document.getElementById('statusNAND')) document.getElementById('statusNAND').textContent = !(andA && andB) ? 1 : 0;
+            if (document.getElementById('statusNOR')) document.getElementById('statusNOR').textContent = !(andA || andB) ? 1 : 0;
+            if (document.getElementById('statusXOR')) document.getElementById('statusXOR').textContent = andA ^ andB;
+            if (document.getElementById('statusXNOR')) document.getElementById('statusXNOR').textContent = !(andA ^ andB) ? 1 : 0;
+        }
+
+        function updateInputIndicator(id, v) {
+            const el = document.getElementById(id);
+            el.textContent = v;
+            el.className = `input-indicator ${v === 1 ? 'active' : 'inactive'}`;
+        }
+
+        const canvas = document.getElementById('timingCanvas');
+        const ctx = canvas.getContext('2d');
+        let CANVAS_WIDTH = 900;
+        let CANVAS_HEIGHT = 250;
+        const DURATION = 10;
+        let X_OFFSET = 130;
+        let PLOT_WIDTH = CANVAS_WIDTH - X_OFFSET;
+        let PIXEL_PER_STEP = PLOT_WIDTH / DURATION;
+        let currentTime = 0;
+        let selectedGateName = 'and';
+        let gateData = { a: [], b: [], y: [] };
+        
+        function applyInputsToDiagram() {
+            if (currentTime >= DURATION) {
+                alert('تم اكتمال الرسم الزمني (10 خطوات). الرجاء الضغط على "إعادة تعيين" للبدء من جديد.');
+                return;
+            }
+            const gate = gates.find(g => g.name === selectedGateName);
+            const inputA = document.getElementById('diagramInputA').checked ? 1 : 0;
+            let inputB = 0;
+            if (gate.inputs === 2) inputB = document.getElementById('diagramInputB').checked ? 1 : 0;
+            let output;
+            if (gate.name === 'and') output = inputA && inputB;
+            else if (gate.name === 'or') output = inputA || inputB;
+            else if (gate.name === 'not') output = !inputA ? 1 : 0;
+            else if (gate.name === 'nand') output = !(inputA && inputB) ? 1 : 0;
+            else if (gate.name === 'nor') output = !(inputA || inputB) ? 1 : 0;
+            else if (gate.name === 'xor') output = inputA ^ inputB;
+            else if (gate.name === 'xnor') output = !(inputA ^ inputB) ? 1 : 0;
+            gateData.a.push(inputA);
+            if (gate.inputs === 2) gateData.b.push(inputB); 
+            gateData.y.push(output);
+            currentTime++;
+            drawTimingDiagram();
+            if (currentTime >= DURATION) alert('اكتمل الرسم الزمني. استخدم زر "إعادة تعيين" للبدء من جديد.');
+        }
+        
+        function resetTimingDiagram() {
+            selectedGateName = document.getElementById('gateSelect').value;
+            currentTime = 0;
+            gateData = { a: [], b: [], y: [] };
+            const gate = gates.find(g => g.name === selectedGateName);
+            const bLabel = document.getElementById('BLabel');
+            const bSwitchContainer = document.getElementById('diagramInputB').parentElement; 
+            if (gate.inputs === 1) {
+                bLabel.style.display = 'none';
+                bSwitchContainer.style.display = 'none';
+            } else {
+                bLabel.style.display = 'inline-block';
+                bSwitchContainer.style.display = 'inline-block';
+            }
+            document.getElementById('diagramInputA').checked = false;
+            document.getElementById('diagramInputB').checked = false;
+            drawTimingDiagram();
+        }
+
+        function drawTimingDiagram() {
+            const gate = gates.find(g => g.name === selectedGateName);
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#fff';
+            for (let i = 0; i <= DURATION; i++) {
+                const x = i * PIXEL_PER_STEP + X_OFFSET; 
+                ctx.strokeStyle = '#333';
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, CANVAS_HEIGHT);
+                ctx.stroke();
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`${i}`, x + 5, CANVAS_HEIGHT - 5);
+            }
+            if (currentTime < DURATION) {
+                const markerX = currentTime * PIXEL_PER_STEP + X_OFFSET;
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(markerX, 0);
+                ctx.lineTo(markerX, CANVAS_HEIGHT);
+                ctx.stroke();
+                ctx.fillStyle = '#ffd700';
+                ctx.fillText(`الخطوة ${currentTime + 1}`, markerX + 5, 20);
+            }
+            let yOffset = 30;
+            drawWave(gateData.a, 'المدخل A', yOffset, '#4CAF50');
+            if (gate.inputs === 2) {
+                drawWave(gateData.b, 'المدخل B', yOffset + 70, '#f44336');
+                drawWave(gateData.y, 'الخرج Y', yOffset + 140, '#4a90e2');
+            } else {
+                drawWave(gateData.y, 'الخرج Y', yOffset + 70, '#4a90e2');
+            }
+        }
+
+        function drawWave(data, label, yStart, color) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            const yLow = yStart + 30;
+            const yHigh = yStart + 10;
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = '#fff';
+            ctx.fillText(label, 5, yStart + 20);
+            ctx.font = '12px Arial';
+            ctx.fillStyle = color;
+            ctx.fillText('1 (مرتفع)', 80, yHigh - 3);
+            ctx.fillText('0 (منخفض)', 80, yLow + 12);
+            ctx.strokeStyle = '#2d2d42';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(X_OFFSET, yHigh); ctx.lineTo(CANVAS_WIDTH, yHigh);
+            ctx.moveTo(X_OFFSET, yLow); ctx.lineTo(CANVAS_WIDTH, yLow);
+            ctx.stroke();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            let startY = yLow; 
+            if (data.length > 0) startY = data[0] === 1 ? yHigh : yLow; 
+            ctx.moveTo(X_OFFSET, startY);
+            data.forEach((value, index) => {
+                const startX = index * PIXEL_PER_STEP + X_OFFSET;
+                const endX = (index + 1) * PIXEL_PER_STEP + X_OFFSET;
+                const currentY = value === 1 ? yHigh : yLow;
+                if (index > 0) {
+                    const prevValue = data[index - 1];
+                    if (prevValue !== value) {
+                        ctx.lineTo(startX, currentY);
+                    } else {
+                        ctx.moveTo(startX, currentY);
+                    }
+                }
+                ctx.lineTo(endX, currentY);
+            });
+            ctx.stroke();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1;
+        }
+
+        function toggleView() {
+            const body = document.body;
+            const icon = document.getElementById('viewIcon');
+            const text = document.getElementById('viewText');
+            body.classList.toggle('mobile-view');
+            if (body.classList.contains('mobile-view')) {
+                icon.textContent = '💻';
+                text.textContent = 'نسخة الحاسوب';
+                CANVAS_WIDTH = Math.min(window.innerWidth - 40, 350);
+                CANVAS_HEIGHT = 200;
+                X_OFFSET = 100;
+                canvas.width = CANVAS_WIDTH;
+                canvas.height = CANVAS_HEIGHT;
+            } else {
+                icon.textContent = '📱';
+                text.textContent = 'نسخة الهاتف';
+                CANVAS_WIDTH = 900;
+                CANVAS_HEIGHT = 250;
+                X_OFFSET = 130;
+                canvas.width = CANVAS_WIDTH;
+                canvas.height = CANVAS_HEIGHT;
+            }
+            PLOT_WIDTH = CANVAS_WIDTH - X_OFFSET;
+            PIXEL_PER_STEP = PLOT_WIDTH / DURATION;
+            drawTimingDiagram();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            gates.forEach(g => updateGateWithControls(g.name));
+            resetTimingDiagram();
+        });
+
+        function switchMode(mode) {
+            const learningMode = document.querySelector('.learning-mode');
+            const quizMode = document.querySelector('.quiz-mode');
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            if (mode === 'learning') {
+                learningMode.classList.add('active');
+                quizMode.classList.remove('active');
+                modeBtns[0].classList.add('active');
+                modeBtns[1].classList.remove('active');
+            } else {
+                learningMode.classList.remove('active');
+                quizMode.classList.add('active');
+                modeBtns[0].classList.remove('active');
+                modeBtns[1].classList.add('active');
+            }
+        }
+
+        let selectedGates = ['all'];
+        let currentQuiz = [];
+        let userAnswers = [];
+
+        const quizBank = {
+            and: [
+                {q: 'ما ناتج بوابة AND عندما A=1 و B=1؟', options: ['0', '1', 'غير محدد', 'يعتمد'], answer: 1},
+                {q: 'ما ناتج بوابة AND عندما A=0 و B=1؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'متى تعطي بوابة AND الناتج 1؟', options: ['عندما يكون أحد المدخلين 1', 'عندما يكون المدخلان مختلفين', 'عندما يكون كلا المدخلين 1', 'عندما يكون أحد المدخلين 0'], answer: 2},
+                {q: 'ما العملية المنطقية التي تمثلها بوابة AND؟', options: ['الجمع', 'الضرب المنطقي', 'النفي', 'الجمع الحصري'], answer: 1}
+            ],
+            or: [
+                {q: 'ما ناتج بوابة OR عندما A=0 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'ما ناتج بوابة OR عندما A=1 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'متى تعطي بوابة OR الناتج 0؟', options: ['عندما يكون أحد المدخلين 1', 'عندما يكون كلا المدخلين 0', 'عندما يكون المدخلان مختلفين', 'دائماً'], answer: 1},
+                {q: 'كم عدد الحالات التي تعطي فيها بوابة OR الناتج 1؟', options: ['1', '2', '3', '4'], answer: 2}
+            ],
+            not: [
+                {q: 'ما ناتج بوابة NOT عندما A=1؟', options: ['0', '1', 'A', 'غير محدد'], answer: 0},
+                {q: 'ما ناتج بوابة NOT عندما A=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'كم مدخل تمتلك بوابة NOT؟', options: ['1', '2', '3', '4'], answer: 0},
+                {q: 'ماذا تفعل بوابة NOT؟', options: ['تجمع المدخلات', 'تعكس المدخل', 'تضرب المدخلات', 'لا تفعل شيئاً'], answer: 1}
+            ],
+            nand: [
+                {q: 'بوابة NAND هي عكس بوابة:', options: ['OR', 'AND', 'NOT', 'XOR'], answer: 1},
+                {q: 'ما ناتج بوابة NAND عندما A=1 و B=1؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'ما ناتج بوابة NAND عندما A=0 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'متى تعطي بوابة NAND الناتج 0؟', options: ['دائماً', 'أبداً', 'عندما يكون كلا المدخلين 1', 'عندما يكون كلا المدخلين 0'], answer: 2}
+            ],
+            nor: [
+                {q: 'بوابة NOR هي عكس بوابة:', options: ['AND', 'OR', 'NOT', 'NAND'], answer: 1},
+                {q: 'ما ناتج بوابة NOR عندما A=0 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'ما ناتج بوابة NOR عندما A=1 و B=1؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'متى تعطي بوابة NOR الناتج 1؟', options: ['عندما يكون أحد المدخلين 1', 'عندما يكون كلا المدخلين 0', 'عندما يكون كلا المدخلين 1', 'دائماً'], answer: 1}
+            ],
+            xor: [
+                {q: 'ما ناتج بوابة XOR عندما A=1 و B=1؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'ما ناتج بوابة XOR عندما A=1 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'متى تعطي بوابة XOR الناتج 1؟', options: ['عندما يكون المدخلان متساويان', 'عندما يكون المدخلان مختلفان', 'عندما يكون كلا المدخلين 1', 'عندما يكون كلا المدخلين 0'], answer: 1},
+                {q: 'ما اسم بوابة XOR بالعربية؟', options: ['الجمع الحصري', 'الضرب المنطقي', 'النفي', 'الجمع المنطقي'], answer: 0}
+            ],
+            xnor: [
+                {q: 'بوابة XNOR هي عكس بوابة:', options: ['AND', 'OR', 'XOR', 'NOT'], answer: 2},
+                {q: 'ما ناتج بوابة XNOR عندما A=0 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 1},
+                {q: 'ما ناتج بوابة XNOR عندما A=1 و B=0؟', options: ['0', '1', 'A', 'B'], answer: 0},
+                {q: 'متى تعطي بوابة XNOR الناتج 1؟', options: ['عندما يكون المدخلان مختلفان', 'عندما يكون المدخلان متساويان', 'دائماً', 'أبداً'], answer: 1}
+            ]
+        };
+
+        function toggleGateSelection(gate) {
+            const buttons = document.querySelectorAll('.gate-select-btn');
+            if (gate === 'all') {
+                selectedGates = ['all'];
+                buttons.forEach(btn => btn.classList.remove('active'));
+                buttons[0].classList.add('active');
+            } else {
+                const allBtn = buttons[0];
+                allBtn.classList.remove('active');
+                const idx = selectedGates.indexOf('all');
+                if (idx > -1) selectedGates.splice(idx, 1);
+                const gateIdx = selectedGates.indexOf(gate);
+                if (gateIdx > -1) {
+                    selectedGates.splice(gateIdx, 1);
+                    event.target.classList.remove('active');
+                } else {
+                    selectedGates.push(gate);
+                    event.target.classList.add('active');
+                }
+                if (selectedGates.length === 0) {
+                    selectedGates = ['all'];
+                    allBtn.classList.add('active');
+                }
+            }
+        }
+
+        function startQuiz() {
+            currentQuiz = [];
+            userAnswers = [];
+            const gatesToTest = selectedGates.includes('all') ? 
+                ['and', 'or', 'not', 'nand', 'nor', 'xor', 'xnor'] : selectedGates;
+            gatesToTest.forEach(gate => {
+                if (quizBank[gate]) {
+                    currentQuiz = currentQuiz.concat(quizBank[gate]);
+                }
+            });
+            currentQuiz.sort(() => Math.random() - 0.5);
+            displayQuiz();
+        }
+
+        function displayQuiz() {
+            const container = document.getElementById('quizContainer');
+            if (currentQuiz.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#f44336;">الرجاء اختيار بوابة واحدة على الأقل</p>';
+                return;
+            }
+            let html = '<div style="max-height: 400px; overflow-y: auto; padding: 10px;">';
+            currentQuiz.forEach((question, idx) => {
+                html += `<div class="quiz-question">
+                    <div style="font-weight: bold; margin-bottom: 10px;">${idx + 1}. ${question.q}</div>
+                    <div class="quiz-options">`;
+                question.options.forEach((option, optIdx) => {
+                    html += `<div class="quiz-option" onclick="selectAnswer(${idx}, ${optIdx})" id="q${idx}opt${optIdx}">
+                        ${option}
+                    </div>`;
+                });
+                html += `</div></div>`;
+            });
+            html += '</div>';
+            html += '<button class="quiz-btn" onclick="submitQuiz()" style="width: 100%; margin-top: 15px;">تسليم الاختبار</button>';
+            html += '<div id="quizResult"></div>';
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(questionIdx, optionIdx) {
+            for (let i = 0; i < 4; i++) {
+                const opt = document.getElementById(`q${questionIdx}opt${i}`);
+                if (opt) opt.classList.remove('selected');
+            }
+            document.getElementById(`q${questionIdx}opt${optionIdx}`).classList.add('selected');
+            userAnswers[questionIdx] = optionIdx;
+        }
+
+        function submitQuiz() {
+            let correct = 0;
+            currentQuiz.forEach((question, idx) => {
+                const userAnswer = userAnswers[idx];
+                const correctAnswer = question.answer;
+                for (let i = 0; i < 4; i++) {
+                    const opt = document.getElementById(`q${idx}opt${i}`);
+                    if (opt) {
+                        opt.style.pointerEvents = 'none';
+                        if (i === correctAnswer) {
+                            opt.classList.add('correct');
+                        } else if (i === userAnswer && i !== correctAnswer) {
+                            opt.classList.add('incorrect');
+                        }
+                    }
+                }
+                if (userAnswer === correctAnswer) correct++;
+            });
+            const percentage = ((correct / currentQuiz.length) * 100).toFixed(1);
+            let grade = '';
+            if (percentage >= 90) grade = 'ممتاز';
+            else if (percentage >= 80) grade = 'جيد جداً';
+            else if (percentage >= 70) grade = 'جيد';
+            else if (percentage >= 60) grade = 'مقبول';
+            else grade = 'يحتاج تحسين';
+            const resultHtml = `<div class="quiz-result">
+                النتيجة: ${correct} من ${currentQuiz.length} (${percentage}%)<br>
+                التقدير: ${grade}
+            </div>
+            <button class="quiz-btn" onclick="startQuiz()" style="width: 100%; margin-top: 10px;">إعادة الاختبار</button>`;
+            document.getElementById('quizResult').innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>
