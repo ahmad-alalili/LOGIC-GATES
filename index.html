@@ -8,6 +8,89 @@
         * {
             box-sizing: border-box;
         }
+        
+        /* شاشة الاختيار الأولية */
+        #welcomeScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        #welcomeScreen.hidden {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .welcome-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #4a90e2;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+        }
+        
+        .welcome-title {
+            font-size: 2em;
+            color: #4a90e2;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(74, 144, 226, 0.7);
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .welcome-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .welcome-btn {
+            background: linear-gradient(135deg, #4a90e2, #357abd);
+            color: white;
+            padding: 20px 40px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.3em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+        }
+        
+        .welcome-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.5);
+        }
+        
+        .welcome-btn .icon {
+            font-size: 2.5em;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
@@ -51,8 +134,8 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(74, 144, 226, 0.3);
-            border: 2px solid #4a90e2;
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            border: 2px solid #ffa000;
             border-radius: 10px;
             padding: 10px 15px;
             cursor: pointer;
@@ -63,16 +146,20 @@
             align-items: center;
             gap: 8px;
             z-index: 100;
+            color: #1a2a6c;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
         }
         .view-toggle:hover {
-            background: rgba(74, 144, 226, 0.5);
+            background: linear-gradient(135deg, #ffed4e, #ffd700);
             transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 215, 0, 0.5);
         }
         body.mobile-view .view-toggle {
             top: 10px;
             right: 10px;
-            padding: 8px 12px;
-            font-size: 0.8em;
+            padding: 6px 10px;
+            font-size: 0.75em;
+            gap: 5px;
         }
         h1 {
             margin: 0;
@@ -80,7 +167,7 @@
             text-shadow: 0 0 10px rgba(74, 144, 226, 0.7);
         }
         body.mobile-view h1 {
-            font-size: 1.5em;
+            font-size: 1.3em;
         }
         .subtitle {
             font-size: 1.2em;
@@ -88,11 +175,27 @@
             margin-top: 10px;
         }
         body.mobile-view .subtitle {
-            font-size: 0.9em;
+            font-size: 0.8em;
             margin-top: 5px;
         }
-        body.mobile-view header > div:last-child {
+        .author-info {
+            margin-top: 15px;
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+        body.mobile-view .author-info {
             display: none;
+        }
+        .author-info .name {
+            font-weight: bold;
+        }
+        .author-info .title {
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+        .author-info .dept {
+            font-size: 0.9em;
+            margin-top: 3px;
         }
         .content {
             display: flex;
@@ -103,6 +206,7 @@
         body.mobile-view .content {
             padding: 10px;
             gap: 10px;
+            flex-direction: column;
         }
         .simulation-area {
             flex: 3;
@@ -129,6 +233,7 @@
             min-width: 100%;
             padding: 10px;
             border-radius: 8px;
+            order: -1;
         }
         .mode-selector {
             display: flex;
@@ -153,12 +258,15 @@
             flex: 1;
         }
         body.mobile-view .mode-btn {
-            padding: 10px 15px;
-            font-size: 1em;
+            padding: 8px 12px;
+            font-size: 0.85em;
         }
         .mode-btn:hover {
             background: rgba(74, 144, 226, 0.4);
             transform: translateY(-2px);
+        }
+        body.mobile-view .mode-btn:hover {
+            transform: none;
         }
         .mode-btn.active {
             background: #4a90e2;
@@ -194,6 +302,10 @@
             border: 2px solid transparent;
             transition: all 0.3s;
         }
+        body.mobile-view .quiz-option {
+            padding: 8px;
+            font-size: 0.9em;
+        }
         .quiz-option:hover {
             background: rgba(74, 144, 226, 0.3);
             border-color: #4a90e2;
@@ -223,12 +335,16 @@
             transition: all 0.3s;
         }
         body.mobile-view .quiz-btn {
-            padding: 8px 15px;
-            font-size: 0.9em;
+            padding: 8px 12px;
+            font-size: 0.85em;
+            margin: 3px;
         }
         .quiz-btn:hover {
             background: #357abd;
             transform: scale(1.05);
+        }
+        body.mobile-view .quiz-btn:hover {
+            transform: none;
         }
         .quiz-result {
             background: rgba(255, 215, 0, 0.2);
@@ -240,11 +356,16 @@
             font-weight: bold;
             text-align: center;
         }
+        body.mobile-view .quiz-result {
+            padding: 10px;
+            font-size: 0.95em;
+        }
         .gate-selector {
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
             margin: 10px 0;
+            justify-content: center;
         }
         .gate-select-btn {
             background: rgba(60, 60, 90, 0.6);
@@ -254,6 +375,10 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: all 0.3s;
+        }
+        body.mobile-view .gate-select-btn {
+            padding: 6px 10px;
+            font-size: 0.8em;
         }
         .gate-select-btn:hover {
             background: rgba(74, 144, 226, 0.3);
@@ -304,6 +429,8 @@
         body.mobile-view .slider:before {
             height: 22px;
             width: 22px;
+            left: 3px;
+            bottom: 4px;
         }
         input:checked + .slider {
             background-color: #4CAF50;
@@ -322,7 +449,7 @@
             margin-top: 30px;
         }
         body.mobile-view .gate-container {
-            gap: 15px;
+            gap: 10px;
             margin-top: 15px;
         }
         .gate {
@@ -337,9 +464,135 @@
         }
         body.mobile-view .gate {
             min-width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 10px;
         }
+        
+        /* تخطيط أفقي للبوابات في نسخة الهاتف بالوضع الأفقي فقط */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body.mobile-view .gate {
+                display: grid;
+                grid-template-columns: 33% 27% 40%;
+                grid-template-rows: auto auto auto auto auto;
+                gap: 0;
+                padding: 2%;
+                align-items: start;
+            }
+            
+            /* العنوان يمتد عبر كل الأعمدة */
+            body.mobile-view .gate h3 {
+                grid-column: 3;
+                grid-row: 1;
+                margin: 0 0 5% 0;
+                font-size: 1em;
+                text-align: center;
+            }
+            
+            /* اليسار: جدول الحقيقة */
+            body.mobile-view .truth-table {
+                grid-column: 1;
+                grid-row: 2 / 6;
+                margin: 0;
+            }
+            
+            body.mobile-view .truth-table table {
+                font-size: 0.75em;
+                width: 100%;
+            }
+            
+            body.mobile-view .truth-table th,
+            body.mobile-view .truth-table td {
+                padding: 5% 3%;
+            }
+            
+            /* الوسط: العناصر مرتبة عمودياً */
+            
+            /* الصف 1: أسماء المدخلات */
+            body.mobile-view .gate-controls {
+                grid-column: 2;
+                grid-row: 2;
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                gap: 5%;
+                margin-bottom: 3%;
+            }
+            
+            body.mobile-view .gate-controls .gate-switch {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+            
+            body.mobile-view .gate-controls .gate-switch label:first-child {
+                font-size: 0.85em;
+                order: 1;
+            }
+            
+            /* الصف 2: الأزرار */
+            body.mobile-view .gate-controls .gate-switch .switch {
+                order: 2;
+                width: 60px;
+                height: 28px;
+            }
+            
+            body.mobile-view .gate-controls .gate-switch .slider:before {
+                height: 20px;
+                width: 20px;
+            }
+            
+            body.mobile-view .gate-controls input:checked + .slider:before {
+                transform: translateX(32px);
+            }
+            
+            /* الصف 3: دوائر الحالة */
+            body.mobile-view .gate-inputs {
+                grid-column: 2;
+                grid-row: 3;
+                display: flex;
+                flex-direction: row-reverse;
+                justify-content: center;
+                gap: 5%;
+                margin: 5% 0;
+            }
+            
+            body.mobile-view .gate-inputs .input-indicator {
+                width: 32px;
+                height: 32px;
+                font-size: 0.95em;
+            }
+            
+            /* الصف 4: نص الخرج */
+            body.mobile-view .gate-output {
+                grid-column: 2;
+                grid-row: 4;
+                font-size: 0.85em;
+                text-align: center;
+                margin: 5% 0;
+            }
+            
+            /* الصف 5: الدائرة الكبيرة */
+            body.mobile-view .output-indicator {
+                grid-column: 2;
+                grid-row: 5;
+                width: 55px;
+                height: 55px;
+                font-size: 1.5em;
+                margin: 0 auto;
+            }
+            
+            /* اليمين: رسم البوابة */
+            body.mobile-view .gate-diagram {
+                grid-column: 3;
+                grid-row: 2 / 6;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 200px;
+                height: auto;
+            }
+        }
+        
         .gate:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(74, 144, 226, 0.4);
@@ -353,7 +606,7 @@
             font-size: 1.4em;
         }
         body.mobile-view .gate h3 {
-            font-size: 1.2em;
+            font-size: 1.1em;
             margin-bottom: 10px;
         }
         .gate-diagram {
@@ -370,7 +623,7 @@
         }
         body.mobile-view .gate-diagram {
             width: 100%;
-            max-width: 230px;
+            max-width: 200px;
             height: 160px;
         }
         .gate-svg {
@@ -389,6 +642,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        body.mobile-view .input-value {
+            width: 18px;
+            height: 18px;
+            font-size: 0.75em;
         }
         .input-a-val {
             top: 26%;
@@ -419,6 +677,11 @@
             right: 5px;
             transform: translateY(-50%);
         }
+        body.mobile-view .output-value {
+            width: 18px;
+            height: 18px;
+            font-size: 0.75em;
+        }
         .led {
             position: absolute;
             width: 16px;
@@ -430,6 +693,11 @@
             right: 30px;
             transform: translateY(-50%);
         }
+        body.mobile-view .led {
+            width: 12px;
+            height: 12px;
+            right: 25px;
+        }
         .led.on {
             background: #4CAF50;
             box-shadow: 0 0 15px #4CAF50;
@@ -439,6 +707,10 @@
             justify-content: center;
             gap: 10px;
             margin: 15px 0;
+        }
+        body.mobile-view .gate-inputs {
+            gap: 8px;
+            margin: 10px 0;
         }
         .input-indicator {
             width: 40px;
@@ -451,6 +723,11 @@
             font-size: 1.2em;
             background: #333;
             border: 2px solid #666;
+        }
+        body.mobile-view .input-indicator {
+            width: 32px;
+            height: 32px;
+            font-size: 1em;
         }
         .input-indicator.active {
             background: #4CAF50;
@@ -468,7 +745,8 @@
             font-weight: bold;
         }
         body.mobile-view .gate-output {
-            font-size: 1.2em;
+            font-size: 1.1em;
+            margin-top: 10px;
         }
         .output-indicator {
             width: 60px;
@@ -482,9 +760,9 @@
             margin: 10px auto;
         }
         body.mobile-view .output-indicator {
-            width: 50px;
-            height: 50px;
-            font-size: 1.5em;
+            width: 45px;
+            height: 45px;
+            font-size: 1.3em;
         }
         .output-indicator.on {
             background: #4CAF50;
@@ -500,6 +778,21 @@
             border-radius: 8px;
             overflow: hidden;
         }
+        body.mobile-view .truth-table {
+            margin-top: 10px;
+        }
+        .truth-table-title {
+            color: #ffd700;
+            font-size: 1em;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0 8px 0;
+            padding: 0;
+        }
+        body.mobile-view .truth-table-title {
+            font-size: 0.9em;
+            margin: 8px 0 5px 0;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -512,8 +805,8 @@
             font-size: 0.9em;
         }
         body.mobile-view th, body.mobile-view td {
-            padding: 5px;
-            font-size: 0.85em;
+            padding: 5px 3px;
+            font-size: 0.8em;
         }
         th {
             background: #1a2a6c;
@@ -526,6 +819,9 @@
             transform: scale(1.02);
             transition: all 0.3s ease;
         }
+        body.mobile-view .current-row {
+            transform: scale(1);
+        }
         .gate-info {
             background: rgba(60, 60, 100, 0.6);
             padding: 15px;
@@ -535,6 +831,21 @@
         }
         body.mobile-view .gate-info {
             padding: 10px;
+            font-size: 0.85em;
+            margin-top: 0;
+        }
+        .gate-info h3 {
+            margin-top: 0;
+            color: #4a90e2;
+        }
+        body.mobile-view .gate-info h3 {
+            font-size: 1em;
+        }
+        .gate-info p {
+            margin: 8px 0;
+        }
+        body.mobile-view .gate-info p {
+            margin: 6px 0;
             font-size: 0.85em;
         }
         .instructions {
@@ -551,17 +862,22 @@
             color: #4a90e2;
             margin-top: 0;
         }
+        body.mobile-view .instructions h3 {
+            font-size: 1em;
+        }
         .instructions ul {
             padding-right: 20px;
+            margin: 10px 0;
         }
         body.mobile-view .instructions ul {
             padding-right: 15px;
+            margin: 8px 0;
         }
         .instructions li {
             margin-bottom: 8px;
         }
         body.mobile-view .instructions li {
-            font-size: 0.9em;
+            font-size: 0.85em;
             margin-bottom: 5px;
         }
         .gate-controls {
@@ -569,6 +885,10 @@
             justify-content: center;
             gap: 10px;
             margin: 10px 0;
+        }
+        body.mobile-view .gate-controls {
+            gap: 8px;
+            margin: 8px 0;
         }
         .gate-switch {
             display: flex;
@@ -579,6 +899,9 @@
         .gate-switch label {
             font-size: 0.9em;
             font-weight: bold;
+        }
+        body.mobile-view .gate-switch label {
+            font-size: 0.8em;
         }
         .timing-diagram-area {
             background: rgba(30, 30, 50, 0.9);
@@ -597,7 +920,7 @@
             text-align: center;
         }
         body.mobile-view .timing-diagram-area h3 {
-            font-size: 1em;
+            font-size: 0.95em;
         }
         #timingCanvas {
             border: 1px solid #5d8aa8;
@@ -605,6 +928,7 @@
             display: block;
             margin: 10px auto;
             max-width: 100%;
+            height: auto;
         }
         .diagram-controls {
             display: flex;
@@ -616,6 +940,12 @@
         }
         body.mobile-view .diagram-controls {
             gap: 8px;
+            font-size: 0.8em;
+        }
+        .diagram-controls label {
+            white-space: nowrap;
+        }
+        body.mobile-view .diagram-controls label {
             font-size: 0.85em;
         }
         .diagram-controls select {
@@ -626,7 +956,74 @@
             color: white;
         }
         body.mobile-view .diagram-controls select {
-            padding: 6px;
+            padding: 5px;
+            font-size: 0.8em;
+        }
+        .status-panel {
+            background: rgba(60, 60, 100, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        body.mobile-view .status-panel {
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .status-panel h3 {
+            margin-top: 0;
+            color: #4a90e2;
+        }
+        body.mobile-view .status-panel h3 {
+            font-size: 1em;
+        }
+        .status-content {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        body.mobile-view .status-content {
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+        .status-content > div {
+            margin: 5px 0;
+        }
+        body.mobile-view .status-content > div {
+            margin: 4px 0;
+        }
+        footer {
+            background: rgba(20, 20, 40, 0.8);
+            padding: 20px;
+            text-align: center;
+            border-top: 2px solid #4a90e2;
+            margin-top: 20px;
+        }
+        body.mobile-view footer {
+            padding: 15px 10px;
+            margin-top: 10px;
+        }
+        footer .copyright {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        body.mobile-view footer .copyright {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        footer .author-name {
+            font-size: 1.2em;
+            color: #4a90e2;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        body.mobile-view footer .author-name {
+            font-size: 1em;
+        }
+        footer .institution {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+        body.mobile-view footer .institution {
             font-size: 0.85em;
         }
         @media (max-width: 1100px) {
@@ -637,9 +1034,35 @@
                 min-width: 100%;
             }
         }
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .simulation-area {
+                min-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- شاشة الترحيب والاختيار -->
+    <div id="welcomeScreen">
+        <div class="welcome-container">
+            <h1 class="welcome-title">محاكاة البوابات المنطقية</h1>
+            <p class="welcome-subtitle">أداة تعليمية تفاعلية للدوائر الرقمية</p>
+            <div class="welcome-buttons">
+                <button class="welcome-btn" onclick="selectView('desktop')">
+                    <span class="icon">💻</span>
+                    <span>نسخة الكمبيوتر</span>
+                </button>
+                <button class="welcome-btn" onclick="selectView('mobile')">
+                    <span class="icon">📱</span>
+                    <span>نسخة الهاتف</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <button class="view-toggle" onclick="toggleView()" id="viewToggleBtn">
@@ -648,13 +1071,36 @@
             </button>
             <h1>محاكاة البوابات المنطقية</h1>
             <div class="subtitle">أداة شرح تفاعلية للمخططات الزمنية والدوائر الرقمية</div>
-            <div style="margin-top: 15px; font-size: 1.1em; opacity: 0.95;">
-                <div style="font-weight: bold;">م. أحمد سعيد العليلي</div>
-                <div style="font-size: 0.95em; margin-top: 5px;">مدرب - الكلية التقنية بالدائر</div>
-                <div style="font-size: 0.9em; margin-top: 3px;">قسم الإلكترونيات الصناعية والتحكم</div>
+            <div class="author-info">
+                <div class="name">م. أحمد سعيد العليلي</div>
+                <div class="title">مدرب - الكلية التقنية بالدائر</div>
+                <div class="dept">قسم الإلكترونيات الصناعية والتحكم</div>
             </div>
         </header>
         <div class="content">
+            <div class="controls">
+                <div class="gate-info">
+                    <h3>معلومات عن البوابات:</h3>
+                    <p><strong>AND:</strong> الناتج 1 فقط إذا كان كلا المدخلين 1</p>
+                    <p><strong>OR:</strong> الناتج 1 إذا كان أحد المدخلين 1 على الأقل</p>
+                    <p><strong>NOT:</strong> مقلوب المدخل</p>
+                    <p><strong>NAND:</strong> عكس بوابة AND</p>
+                    <p><strong>NOR:</strong> عكس بوابة OR</p>
+                    <p><strong>XOR:</strong> الناتج 1 إذا كان المدخلان مختلفين</p>
+                    <p><strong>XNOR:</strong> الناتج 1 إذا كان المدخلان متماثلين</p>
+                </div>
+                <div class="status-panel">
+                    <h3>الحالة الحالية:</h3>
+                    <div class="status-content">
+                        <div>المدخل A: <span id="statusA">0</span></div>
+                        <div>المدخل B: <span id="statusB">0</span></div>
+                        <div style="margin-top: 10px; font-weight: bold;">النتائج:</div>
+                        <div>AND: <span id="statusAND">0</span> | OR: <span id="statusOR">0</span> | NOT: <span id="statusNOT">1</span></div>
+                        <div>NAND: <span id="statusNAND">1</span> | NOR: <span id="statusNOR">1</span></div>
+                        <div>XOR: <span id="statusXOR">0</span> | XNOR: <span id="statusXNOR">1</span></div>
+                    </div>
+                </div>
+            </div>
             <div class="simulation-area">
                 <div class="mode-selector">
                     <button class="mode-btn active" onclick="switchMode('learning')">📚 وضع التعلم</button>
@@ -679,12 +1125,12 @@
                             <label>المدخل A:</label>
                             <label class="switch"><input type="checkbox" id="diagramInputA"><span class="slider"></span></label>
                             <label id="BLabel">المدخل B:</label>
-                            <label class="switch"><input type="checkbox" id="diagramInputB"><span class="slider"></span></label>
+                            <label class="switch" id="BSwitch"><input type="checkbox" id="diagramInputB"><span class="slider"></span></label>
                             <button class="quiz-btn" onclick="applyInputsToDiagram()">▶️ تسجيل الخطوة</button>
                             <button class="quiz-btn" onclick="resetTimingDiagram()">🔄 إعادة تعيين</button>
                         </div>
                         <canvas id="timingCanvas" width="900" height="250"></canvas>
-                        <div style="text-align:center; font-size:0.9em; opacity:0.8;">
+                        <div style="text-align:center; font-size:0.9em; opacity:0.8; margin-top: 10px;">
                             الوضع: يدوي (خطوة بخطوة). يمكنك تغيير المدخلات A و B ثم الضغط على "تسجيل الخطوة" لتسجيل النبضة ورسم المخرج.
                         </div>
                     </div>
@@ -721,43 +1167,36 @@
                     </div>
                 </div>
             </div>
-            <div class="controls">
-                <div class="gate-info">
-                    <h3>معلومات عن البوابات:</h3>
-                    <p><strong>AND:</strong> الناتج 1 فقط إذا كان كلا المدخلين 1</p>
-                    <p><strong>OR:</strong> الناتج 1 إذا كان أحد المدخلين 1 على الأقل</p>
-                    <p><strong>NOT:</strong> مقلوب المدخل</p>
-                    <p><strong>NAND:</strong> عكس بوابة AND</p>
-                    <p><strong>NOR:</strong> عكس بوابة OR</p>
-                    <p><strong>XOR:</strong> الناتج 1 إذا كان المدخلان مختلفين</p>
-                    <p><strong>XNOR:</strong> الناتج 1 إذا كان المدخلان متماثلين</p>
-                </div>
-                <div style="background: rgba(60, 60, 100, 0.6); padding: 15px; border-radius: 10px; margin-top: 20px;">
-                    <h3>الحالة الحالية:</h3>
-                    <div style="font-size: 1.2em; margin-top: 10px;">
-                        <div>المدخل A: <span id="statusA">0</span></div>
-                        <div>المدخل B: <span id="statusB">0</span></div>
-                        <div style="margin-top: 10px; font-weight: bold;">النتائج:</div>
-                        <div>AND: <span id="statusAND">0</span> | OR: <span id="statusOR">0</span> | NOT: <span id="statusNOT">1</span></div>
-                        <div>NAND: <span id="statusNAND">1</span> | NOR: <span id="statusNOR">1</span></div>
-                        <div>XOR: <span id="statusXOR">0</span> | XNOR: <span id="statusXNOR">1</span></div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <footer style="background: rgba(20, 20, 40, 0.8); padding: 20px; text-align: center; border-top: 2px solid #4a90e2; margin-top: 20px;">
-            <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 8px;">
-                © 2025 جميع الحقوق محفوظة
-            </div>
-            <div style="font-size: 1.2em; color: #4a90e2; font-weight: bold; margin-bottom: 5px;">
-                م. أحمد سعيد العليلي
-            </div>
-            <div style="font-size: 0.95em; opacity: 0.9;">
-                الكلية التقنية بالدائر - قسم الإلكترونيات الصناعية والتحكم
-            </div>
+        <footer>
+            <div class="copyright">© 2025 جميع الحقوق محفوظة</div>
+            <div class="author-name">م. أحمد سعيد العليلي</div>
+            <div class="institution">الكلية التقنية بالدائر - قسم الإلكترونيات الصناعية والتحكم</div>
         </footer>
     </div>
     <script>
+        // دالة اختيار النسخة عند فتح الصفحة
+        function selectView(viewType) {
+            const welcomeScreen = document.getElementById('welcomeScreen');
+            welcomeScreen.classList.add('hidden');
+            
+            if (viewType === 'mobile') {
+                document.body.classList.add('mobile-view');
+                isMobileView = true;
+                document.getElementById('viewIcon').textContent = '💻';
+                document.getElementById('viewText').textContent = 'نسخة الحاسوب';
+                updateCanvasSize();
+            } else {
+                document.body.classList.remove('mobile-view');
+                isMobileView = false;
+                document.getElementById('viewIcon').textContent = '📱';
+                document.getElementById('viewText').textContent = 'نسخة الهاتف';
+                updateCanvasSize();
+            }
+            
+            drawTimingDiagram();
+        }
+    
         const gates = [
             {name: 'and', title: 'البوابة AND', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="135" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="60" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="60" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 L 60 90 L 90 90 A 30 30 0 0 0 90 30 Z" fill="none" stroke="white" stroke-width="2"/><line x1="120" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">A × B = Y</text>', inputs: 2, table: [[0,0,0],[0,1,0],[1,0,0],[1,1,1]]},
             {name: 'or', title: 'البوابة OR', svg: '<text x="35" y="35" font-family="Arial, sans-serif" font-size="20" fill="#4CAF50">A</text><text x="35" y="95" font-family="Arial, sans-serif" font-size="20" fill="#2196F3">B</text><text x="130" y="55" font-family="Arial, sans-serif" font-size="20" fill="#FFD700">Y</text><line x1="20" y1="42" x2="62" y2="42" stroke="white" stroke-width="2"/><line x1="20" y1="78" x2="62" y2="78" stroke="white" stroke-width="2"/><path d="M 60 30 Q 70 60 60 90" fill="none" stroke="white" stroke-width="2"/><path d="M 60 30 Q 95 30 115 60" fill="none" stroke="white" stroke-width="2"/><path d="M 60 90 Q 95 90 115 60" fill="none" stroke="white" stroke-width="2"/><line x1="115" y1="60" x2="155" y2="60" stroke="white" stroke-width="2"/><text x="50" y="130" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">A + B = Y</text>', inputs: 2, table: [[0,0,0],[0,1,1],[1,0,1],[1,1,1]]},
@@ -770,7 +1209,7 @@
 
         function createGateHTML(g) {
             const valClass = g.inputs === 1 ? 'input-single-val' : '';
-            return `<div class="gate"><h3>${g.title}</h3><div class="gate-diagram"><svg class="gate-svg" viewBox="0 0 180 120">${g.svg}</svg><div class="input-value ${valClass || 'input-a-val'}" id="${g.name}InputAValue">0</div>${g.inputs === 2 ? `<div class="input-value input-b-val" id="${g.name}InputBValue">0</div>` : ''}<div class="output-value" id="${g.name}OutputValue">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="led${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? ' on' : ''}" id="${g.name}Led"></div></div><div class="gate-controls"><div class="gate-switch"><label>المدخل A</label><label class="switch"><input type="checkbox" id="${g.name}A" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>${g.inputs === 2 ? `<div class="gate-switch"><label>المدخل B</label><label class="switch"><input type="checkbox" id="${g.name}B" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>` : ''}</div><div class="gate-inputs"><div class="input-indicator" id="${g.name}AIndicator">0</div>${g.inputs === 2 ? `<div class="input-indicator" id="${g.name}BIndicator">0</div>` : ''}</div><div class="gate-output">الخرج Y:</div><div class="output-indicator ${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? 'on' : 'off'}" id="${g.name}Output">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="truth-table"><table id="${g.name}Table"><thead><tr>${g.inputs === 2 ? '<th>A</th><th>B</th>' : '<th>A</th>'}<th>Y</th></tr></thead><tbody>${g.table.map((r, i) => `<tr id="${g.name}Row${g.inputs === 2 ? r[0] + '' + r[1] : r[0]}">${g.inputs === 2 ? `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td>` : `<td>${r[0]}</td><td>${r[1]}</td>`}</tr>`).join('')}</tbody></table></div></div>`;
+            return `<div class="gate"><h3>${g.title}</h3><div class="gate-diagram"><svg class="gate-svg" viewBox="0 0 180 120">${g.svg}</svg><div class="input-value ${valClass || 'input-a-val'}" id="${g.name}InputAValue">0</div>${g.inputs === 2 ? `<div class="input-value input-b-val" id="${g.name}InputBValue">0</div>` : ''}<div class="output-value" id="${g.name}OutputValue">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="led${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? ' on' : ''}" id="${g.name}Led"></div></div><div class="gate-controls"><div class="gate-switch"><label>المدخل A</label><label class="switch"><input type="checkbox" id="${g.name}A" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>${g.inputs === 2 ? `<div class="gate-switch"><label>المدخل B</label><label class="switch"><input type="checkbox" id="${g.name}B" onchange="updateGateWithControls('${g.name}')"><span class="slider"></span></label></div>` : ''}</div><div class="gate-inputs"><div class="input-indicator" id="${g.name}AIndicator">0</div>${g.inputs === 2 ? `<div class="input-indicator" id="${g.name}BIndicator">0</div>` : ''}</div><div class="gate-output">الخرج Y:</div><div class="output-indicator ${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? 'on' : 'off'}" id="${g.name}Output">${g.name === 'not' || g.name === 'nand' || g.name === 'nor' || g.name === 'xnor' ? '1' : '0'}</div><div class="truth-table"><h4 class="truth-table-title">جدول الحقيقة</h4><table id="${g.name}Table"><thead><tr>${g.inputs === 2 ? '<th>A</th><th>B</th>' : '<th>A</th>'}<th>Y</th></tr></thead><tbody>${g.table.map((r, i) => `<tr id="${g.name}Row${g.inputs === 2 ? r[0] + '' + r[1] : r[0]}">${g.inputs === 2 ? `<td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td>` : `<td>${r[0]}</td><td>${r[1]}</td>`}</tr>`).join('')}</tbody></table></div></div>`;
         }
 
         document.getElementById('gateContainer').innerHTML = gates.map(createGateHTML).join('');
@@ -836,6 +1275,25 @@
         let currentTime = 0;
         let selectedGateName = 'and';
         let gateData = { a: [], b: [], y: [] };
+        let isMobileView = false;
+        
+        function updateCanvasSize() {
+            if (isMobileView) {
+                const containerWidth = document.querySelector('.timing-diagram-area').offsetWidth;
+                CANVAS_WIDTH = Math.min(containerWidth - 40, 350);
+                CANVAS_HEIGHT = 200;
+                X_OFFSET = 80;
+            } else {
+                CANVAS_WIDTH = 900;
+                CANVAS_HEIGHT = 250;
+                X_OFFSET = 130;
+            }
+            
+            canvas.width = CANVAS_WIDTH;
+            canvas.height = CANVAS_HEIGHT;
+            PLOT_WIDTH = CANVAS_WIDTH - X_OFFSET;
+            PIXEL_PER_STEP = PLOT_WIDTH / DURATION;
+        }
         
         function applyInputsToDiagram() {
             if (currentTime >= DURATION) {
@@ -868,16 +1326,21 @@
             gateData = { a: [], b: [], y: [] };
             const gate = gates.find(g => g.name === selectedGateName);
             const bLabel = document.getElementById('BLabel');
-            const bSwitchContainer = document.getElementById('diagramInputB').parentElement; 
+            const bSwitch = document.getElementById('BSwitch');
+            
             if (gate.inputs === 1) {
-                bLabel.style.display = 'none';
-                bSwitchContainer.style.display = 'none';
+                if (bLabel) bLabel.style.display = 'none';
+                if (bSwitch) bSwitch.style.display = 'none';
             } else {
-                bLabel.style.display = 'inline-block';
-                bSwitchContainer.style.display = 'inline-block';
+                if (bLabel) bLabel.style.display = 'inline-block';
+                if (bSwitch) bSwitch.style.display = 'inline-block';
             }
-            document.getElementById('diagramInputA').checked = false;
-            document.getElementById('diagramInputB').checked = false;
+            
+            const inputA = document.getElementById('diagramInputA');
+            const inputB = document.getElementById('diagramInputB');
+            if (inputA) inputA.checked = false;
+            if (inputB) inputB.checked = false;
+            
             drawTimingDiagram();
         }
 
@@ -886,8 +1349,9 @@
             ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
-            ctx.font = '14px Arial';
+            ctx.font = isMobileView ? '11px Arial' : '14px Arial';
             ctx.fillStyle = '#fff';
+            
             for (let i = 0; i <= DURATION; i++) {
                 const x = i * PIXEL_PER_STEP + X_OFFSET; 
                 ctx.strokeStyle = '#333';
@@ -898,6 +1362,7 @@
                 ctx.fillStyle = '#fff';
                 ctx.fillText(`${i}`, x + 5, CANVAS_HEIGHT - 5);
             }
+            
             if (currentTime < DURATION) {
                 const markerX = currentTime * PIXEL_PER_STEP + X_OFFSET;
                 ctx.strokeStyle = '#ffd700';
@@ -909,6 +1374,7 @@
                 ctx.fillStyle = '#ffd700';
                 ctx.fillText(`الخطوة ${currentTime + 1}`, markerX + 5, 20);
             }
+            
             let yOffset = 30;
             drawWave(gateData.a, 'المدخل A', yOffset, '#4CAF50');
             if (gate.inputs === 2) {
@@ -924,29 +1390,36 @@
             ctx.lineWidth = 3;
             const yLow = yStart + 30;
             const yHigh = yStart + 10;
-            ctx.font = 'bold 16px Arial';
+            
+            ctx.font = isMobileView ? 'bold 12px Arial' : 'bold 16px Arial';
             ctx.fillStyle = '#fff';
             ctx.fillText(label, 5, yStart + 20);
-            ctx.font = '12px Arial';
+            
+            ctx.font = isMobileView ? '10px Arial' : '12px Arial';
             ctx.fillStyle = color;
-            ctx.fillText('1 (مرتفع)', 80, yHigh - 3);
-            ctx.fillText('0 (منخفض)', 80, yLow + 12);
+            const xOffset = isMobileView ? 60 : 80;
+            ctx.fillText('1 (مرتفع)', xOffset, yHigh - 3);
+            ctx.fillText('0 (منخفض)', xOffset, yLow + 12);
+            
             ctx.strokeStyle = '#2d2d42';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(X_OFFSET, yHigh); ctx.lineTo(CANVAS_WIDTH, yHigh);
             ctx.moveTo(X_OFFSET, yLow); ctx.lineTo(CANVAS_WIDTH, yLow);
             ctx.stroke();
+            
             ctx.strokeStyle = color;
             ctx.lineWidth = 3;
             ctx.beginPath();
             let startY = yLow; 
             if (data.length > 0) startY = data[0] === 1 ? yHigh : yLow; 
             ctx.moveTo(X_OFFSET, startY);
+            
             data.forEach((value, index) => {
                 const startX = index * PIXEL_PER_STEP + X_OFFSET;
                 const endX = (index + 1) * PIXEL_PER_STEP + X_OFFSET;
                 const currentY = value === 1 ? yHigh : yLow;
+                
                 if (index > 0) {
                     const prevValue = data[index - 1];
                     if (prevValue !== value) {
@@ -966,26 +1439,19 @@
             const body = document.body;
             const icon = document.getElementById('viewIcon');
             const text = document.getElementById('viewText');
+            
             body.classList.toggle('mobile-view');
-            if (body.classList.contains('mobile-view')) {
+            isMobileView = body.classList.contains('mobile-view');
+            
+            if (isMobileView) {
                 icon.textContent = '💻';
                 text.textContent = 'نسخة الحاسوب';
-                CANVAS_WIDTH = Math.min(window.innerWidth - 40, 350);
-                CANVAS_HEIGHT = 200;
-                X_OFFSET = 100;
-                canvas.width = CANVAS_WIDTH;
-                canvas.height = CANVAS_HEIGHT;
             } else {
                 icon.textContent = '📱';
                 text.textContent = 'نسخة الهاتف';
-                CANVAS_WIDTH = 900;
-                CANVAS_HEIGHT = 250;
-                X_OFFSET = 130;
-                canvas.width = CANVAS_WIDTH;
-                canvas.height = CANVAS_HEIGHT;
             }
-            PLOT_WIDTH = CANVAS_WIDTH - X_OFFSET;
-            PIXEL_PER_STEP = PLOT_WIDTH / DURATION;
+            
+            updateCanvasSize();
             drawTimingDiagram();
         }
 
